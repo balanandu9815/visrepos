@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/data/jpa
+    	http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd">
+	<context:annotation-config />
+	<context:component-scan
+		base-package="com.accionlabs.codetest.vis" />
+	
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.h2.Driver" />
+		<property name="url"
+			value="jdbc:h2:file:~/test;USER=balanandu;PASSWORD=admin" />
+		<property name="username" value="balanandu" />
+		<property name="password" value="admin" />
+	</bean>
+	<bean id="hibernateVendor"
+		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+	</bean>
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan"
+			value="com.accionlabs.codetest.vis" />
+		<property name="jpaVendorAdapter" ref="hibernateVendor" />
+		<property name="JpaProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+		<property name="persistenceUnitName" value="persistenceUnit" />
+		<property name="persistenceProviderClass"
+			value="org.hibernate.jpa.HibernatePersistenceProvider" />
+		<property name="persistenceXmlLocation"
+			value="classpath:com/accionlabs/codetest/vis/resources/persistence.xml" />
+
+	</bean>
+
+	<bean id="myTransactionManager"
+		class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory"
+			ref="entityManagerFactory" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:annotation-driven
+		transaction-manager="myTransactionManager" />
+	<bean id="vehicleDao"
+		class="com.accionlabs.codetest.vis.dao.VehicleDaoImpl">
+
+	</bean>
+
+	<bean id="vehicleInventorySearchService"
+		class="com.accionlabs.codetest.vis.service.VehicleInventorySearchServiceImpl">
+		<property name="vehicleDao" ref="vehicleDao"></property>
+	</bean>
+
+</beans>
+
+
+
+
+
+
+
+
+
+
+
